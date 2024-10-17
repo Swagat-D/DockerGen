@@ -19,6 +19,7 @@ import { useTheme } from 'next-themes'
 import CheckRepotech from '@/functions/CheckRepotech'
 import CheckRepotechurl from '@/functions/Checkrepotechurl'
 import Homepage from './Skeleton/Homepage'
+import dockerFilesLatest from './dockerfiles/dockerFilesLatest'
 const generateDockerfile = async (repoUrl: string) => { 
   return `FROM node:14
 WORKDIR /app
@@ -40,7 +41,6 @@ const detectLanguagesAndFrameworks = async (repoUrl: string) => {
 export default function DockerFilegen({userdata,repo,token,islogin,loading}:any) {
     const { theme, setTheme } = useTheme()
   const [gitUrl, setGitUrl] = useState('')
-  const [repos, setRepos] = useState<{ id: number; name: string; url: string; stars: number; language: string }[]>([])
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null)
   const [dockerfile, setDockerfile] = useState('')
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -48,7 +48,7 @@ export default function DockerFilegen({userdata,repo,token,islogin,loading}:any)
   const [isCommitting, setIsCommitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<{ name: string; avatar: string } | null>(null)
-  const [detectedTech, setDetectedTech] = useState<{ languages: string[], frameworks: string[] } | null>(null)
+  const [detectedTech, setDetectedTech] = useState([])
 
   const handleSignIn = async () => {
                    const clientId = process.env.NEXT_PUBLIC_GIT_HUB_CLIENT_ID;
@@ -80,21 +80,17 @@ if(islogin){
     setIsGenerating(true)
       //@ts-ignore
     const {framework,tech}=await CheckRepotech(selectedRepo.owner.login,selectedRepo.name,token);
+    //@ts-ignore
+   let content = dockerFilesLatest[framework]
+   setDockerfile(content)
+   const techd = Object.keys(tech);
+   const newtechd = [...techd,framework]
+   //@ts-ignore
+   setDetectedTech(newtechd)
+   setIsGenerating(false)
     setIsGenerating(false)
     console.log("tech is ",tech)
     console.log("framework is ",framework)
-    // setIsGenerating(true)
-    // setError(null)
-    // try {
-    //   const generatedDockerfile = await generateDockerfile(url)
-    //   setDockerfile(generatedDockerfile)
-    //   const detected = await detectLanguagesAndFrameworks(url)
-    //   setDetectedTech(detected)
-    // } catch (err) {
-    //   setError('Failed to generate Dockerfile. Please check the repository URL and try again.')
-    // } finally {
-    //   setIsGenerating(false)
-    // }
   }
   //normal
   const handleGenerate = async (url: string) => {
@@ -110,21 +106,14 @@ if(islogin){
       setIsGenerating(false)
       return
     }
-    setIsGenerating(false)
-    console.log("tech is ",tech)
-    console.log("framework is ",framework)
-    
-    // setError(null)
-    // try {
-    //   const generatedDockerfile = await generateDockerfile(url)
-    //   setDockerfile(generatedDockerfile)
-    //   const detected = await detectLanguagesAndFrameworks(url)
-    //   setDetectedTech(detected)
-    // } catch (err) {
-    //   setError('Failed to generate Dockerfile. Please check the repository URL and try again.')
-    // } finally {
-    //   setIsGenerating(false)
-    // }
+    //@ts-ignore
+   let content = dockerFilesLatest[framework]
+   setDockerfile(content)
+   const techd = Object.keys(tech);
+   const newtechd = [...techd,framework]
+   //@ts-ignore
+   setDetectedTech(newtechd)
+   setIsGenerating(false)
   }
 
   const handleCommit = async () => {
@@ -348,11 +337,8 @@ if(islogin){
                         Detected Technologies
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {detectedTech.languages.map((lang) => (
+                        {detectedTech.map((lang) => (
                           <Badge key={lang} variant="secondary">{lang}</Badge>
-                        ))}
-                        {detectedTech.frameworks.map((framework) => (
-                          <Badge key={framework} variant="outline">{framework}</Badge>
                         ))}
                       </div>
                     </div>

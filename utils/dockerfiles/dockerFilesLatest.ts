@@ -1,5 +1,5 @@
-export const dockerFilesLatest = {
-    Reactjs: `
+const dockerFilesLatest = {
+  Reactjs: `
       FROM node:18-alpine AS build
       WORKDIR /app
       COPY package*.json ./
@@ -12,8 +12,8 @@ export const dockerFilesLatest = {
       EXPOSE 80
       CMD ["nginx", "-g", "daemon off;"]
     `,
-  
-    Nextjs: `
+
+  Nextjs: `
       FROM node:18-alpine AS deps
       WORKDIR /app
       COPY package*.json ./
@@ -31,8 +31,8 @@ export const dockerFilesLatest = {
       EXPOSE 3000
       CMD ["npm", "run", "start"]
     `,
-  
-    Angularjs: `
+
+  Angularjs: `
       FROM node:18-alpine AS build
       WORKDIR /app
       COPY package*.json ./
@@ -45,8 +45,8 @@ export const dockerFilesLatest = {
       EXPOSE 80
       CMD ["nginx", "-g", "daemon off;"]
     `,
-  
-    Flask: `
+
+  Flask: `
       FROM python:3.12-alpine
       WORKDIR /app
       COPY requirements.txt ./
@@ -55,8 +55,8 @@ export const dockerFilesLatest = {
       EXPOSE 5000
       CMD ["flask", "run", "--host=0.0.0.0"]
     `,
-  
-    Django: `
+
+  Django: `
       FROM python:3.12-alpine
       WORKDIR /app
       COPY requirements.txt ./
@@ -65,23 +65,23 @@ export const dockerFilesLatest = {
       EXPOSE 8000
       CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     `,
-  
-    Springboot: `
+
+  Springboot: `
       FROM eclipse-temurin:17-jre-alpine
       WORKDIR /app
       COPY target/*.jar app.jar
       EXPOSE 8080
       CMD ["java", "-jar", "app.jar"]
     `,
-  
-    Servlet: `
+
+  Servlet: `
       FROM tomcat:10.1-alpine
       COPY target/*.war /usr/local/tomcat/webapps/
       EXPOSE 8080
       CMD ["catalina.sh", "run"]
     `,
-  
-    Vuejs: `
+
+  Vuejs: `
       FROM node:18-alpine AS build
       WORKDIR /app
       COPY package*.json ./
@@ -94,8 +94,8 @@ export const dockerFilesLatest = {
       EXPOSE 80
       CMD ["nginx", "-g", "daemon off;"]
     `,
-  
-    Nodejs: `
+
+  Nodejs: `
       FROM node:18-alpine
       WORKDIR /app
       COPY package*.json ./
@@ -104,8 +104,8 @@ export const dockerFilesLatest = {
       EXPOSE 3000
       CMD ["npm", "start"]
     `,
-  
-    Vite: `
+
+  Vite: `
       FROM node:18-alpine AS build
       WORKDIR /app
       COPY package*.json ./
@@ -118,8 +118,8 @@ export const dockerFilesLatest = {
       EXPOSE 80
       CMD ["nginx", "-g", "daemon off;"]
     `,
-  
-    Nuxtjs: `
+
+  Nuxtjs: `
       FROM node:18-alpine
       WORKDIR /app
       COPY package*.json ./
@@ -128,14 +128,14 @@ export const dockerFilesLatest = {
       EXPOSE 3000
       CMD ["npm", "run", "start"]
     `,
-  
-    PHP: `
+
+  PHP: `
       FROM php:8.2-apache
       COPY . /var/www/html/
       EXPOSE 80
     `,
-  
-    Go: `
+
+  Go: `
       FROM golang:1.21-alpine AS build
       WORKDIR /app
       COPY . .
@@ -147,16 +147,16 @@ export const dockerFilesLatest = {
       EXPOSE 8080
       CMD ["./main"]
     `,
-  
-    Java: `
+
+  Java: `
       FROM eclipse-temurin:17-jre-alpine
       WORKDIR /app
       COPY target/*.jar app.jar
       EXPOSE 8080
       CMD ["java", "-jar", "app.jar"]
     `,
-  
-    Python: `
+
+  Python: `
       FROM python:3.12-alpine
       WORKDIR /app
       COPY requirements.txt ./
@@ -165,8 +165,8 @@ export const dockerFilesLatest = {
       EXPOSE 8000
       CMD ["python", "app.py"]
     `
-    ,
-    html: `
+  ,
+  html: `
 # Stage 1: Use an Alpine-based image for a small footprint
 FROM nginx:alpine
 
@@ -183,7 +183,7 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
     `,
-    Other:`
+  Other: `
     # NOTE: Your framework or technology wasn't detected, so we generated this generic Dockerfile.
 # Please modify the base image, dependency installation, and commands based on your specific framework or language.
 
@@ -219,7 +219,23 @@ EXPOSE 80  # Adjust based on your app's needs, like 3000 for Node.js or 8080 for
 # Start the server or app (replace with relevant command for your framework)
 CMD ["nginx", "-g", "daemon off;"]  # Adjust command for your framework
 
-    `
+    `,
+    C:`
+# Use a lightweight image with GCC for compiling C programs
+FROM gcc:12-alpine
 
-  };
-  
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the C source code
+COPY main.c .
+
+# Compile the C program
+RUN gcc -o myapp main.c
+
+# Command to run the compiled application
+CMD ["./myapp"]
+
+    `
+};
+export default dockerFilesLatest;

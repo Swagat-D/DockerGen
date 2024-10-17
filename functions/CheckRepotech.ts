@@ -149,14 +149,18 @@ const CheckRepotech=async(login:string,name:string,token:string)=>{
             }
             //end 
             }
+            else if (datai.hasOwnProperty("Go")) {
+              framework="Go";
+            }
+            else if (datai.hasOwnProperty("C")) {
+              framework="C";
+            }
             else if (datai.hasOwnProperty("HTML")) {
               framework="html";
             } else if (datai.hasOwnProperty("JavaScript")) {
               framework="Nodejs"
             }
-           else if (datai.hasOwnProperty("Go")) {
-            framework="Go";
-          }
+          
             else {
               framework="Other";
             }

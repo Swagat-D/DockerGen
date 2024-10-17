@@ -156,6 +156,9 @@ catch(err){
               else if (datai.hasOwnProperty("Go")) {
                 framework="Go";
               }
+              else if (datai.hasOwnProperty("C")) {
+                framework="C";
+              }
               else if (datai.hasOwnProperty("HTML")) {
                 framework="html";
               } else if (datai.hasOwnProperty("JavaScript")) {
