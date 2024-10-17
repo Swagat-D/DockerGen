@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Github, Upload, FileCode2, Check, AlertCircle, Copy, RefreshCw, Trash2, Save, Download, Menu, X, Home, Settings, HelpCircle, Code2 } from 'lucide-react'
+import { Github, Upload, FileCode2, Check, AlertCircle, Copy, RefreshCw, Trash2, Save, Download, Menu, X, Home, Settings, HelpCircle, Code2, Moon, Sun } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,18 +14,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-// Placeholder functions (these would be implemented with actual API calls)
-const signInWithGithub = async () => { /* Implementation */ }
-const fetchUserRepos = async () => { 
-  return [
-    { id: 1, name: 'repo1', url: 'https://github.com/user/repo1', stars: 10, language: 'JavaScript' },
-    { id: 2, name: 'repo2', url: 'https://github.com/user/repo2', stars: 5, language: 'Python' },
-    { id: 3, name: 'repo3', url: 'https://github.com/user/repo3', stars: 15, language: 'TypeScript' },
-    { id: 4, name: 'repo4', url: 'https://github.com/user/repo4', stars: 3, language: 'Go' },
-    { id: 5, name: 'repo5', url: 'https://github.com/user/repo5', stars: 8, language: 'Rust' },
-  ]
-}
+import {Toaster,toast} from "sonner"
+import { useTheme } from 'next-themes'
 const generateDockerfile = async (repoUrl: string) => { 
   return `FROM node:14
 WORKDIR /app
@@ -45,6 +35,7 @@ const detectLanguagesAndFrameworks = async (repoUrl: string) => {
 }
 
 export default function DockerFilegen() {
+    const { theme, setTheme } = useTheme()
   const [gitUrl, setGitUrl] = useState('')
   const [repos, setRepos] = useState<{ id: number; name: string; url: string; stars: number; language: string }[]>([])
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null)
@@ -57,15 +48,15 @@ export default function DockerFilegen() {
   const [detectedTech, setDetectedTech] = useState<{ languages: string[], frameworks: string[] } | null>(null)
 
   const handleSignIn = async () => {
-    try {
-      await signInWithGithub()
-      setIsSignedIn(true)
-      const userRepos = await fetchUserRepos()
-      setRepos(userRepos)
-      setUser({ name: 'John Doe', avatar: '/placeholder.svg?height=40&width=40' })
-    } catch (err) {
-      setError('Failed to sign in. Please try again.')
-    }
+    // try {
+    //   await signInWithGithub()
+    //   setIsSignedIn(true)
+    //   const userRepos = await fetchUserRepos()
+    //   setRepos(userRepos)
+    //   setUser({ name: 'John Doe', avatar: '/placeholder.svg?height=40&width=40' })
+    // } catch (err) {
+    //   setError('Failed to sign in. Please try again.')
+    // }
   }
 
   const handleGenerate = async (url: string) => {
@@ -100,11 +91,13 @@ export default function DockerFilegen() {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(dockerfile)
+    toast.success("Copied Successfully");
     // You might want to show a temporary success message here
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/5 to-background">
+        <Toaster position='top-center'/>
       <nav className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
@@ -138,6 +131,22 @@ export default function DockerFilegen() {
                   <Github className="mr-2 h-4 w-4" /> Sign In
                 </Button>
               )}
+              <div className='mx-6'>
+               <TooltipProvider >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                      <span className="sr-only">Toggle theme</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Toggle theme</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              </div>
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="md:hidden ml-2">
