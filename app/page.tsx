@@ -1,9 +1,29 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import DockerFilegen from '@/utils/DockerFilegen'
 const page = () => {
+  const [alluserdata,setalluserdata] = useState([]);
+  const[token,setToken]=useState("");
+  const[repo,setAllRepo]=useState([])
+  const [islogin,setislogin] =useState(false)
+  const fetchuserdata = async()=>{
+   const data = await fetch("/api/verifyuser");
+   const result = await data.json();
+   console.log("result is ",result)
+   if(result.success){
+    setalluserdata(result.data)
+    setAllRepo(result.repo)
+    setToken(result.token)
+    setislogin(true);
+   }
+  }
+  console.log(alluserdata,repo,token)
+  useEffect(()=>{
+fetchuserdata();
+  },[])
   return (
     <div>
-      <DockerFilegen/>
+      <DockerFilegen userdata={alluserdata} repo={repo} token={token} islogin={islogin}/>
     </div>
   )
 }

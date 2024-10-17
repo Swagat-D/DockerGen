@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Github, Upload, FileCode2, Check, AlertCircle, Copy, RefreshCw, Trash2, Save, Download, Menu, X, Home, Settings, HelpCircle, Code2, Moon, Sun } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -34,7 +34,7 @@ const detectLanguagesAndFrameworks = async (repoUrl: string) => {
   }
 }
 
-export default function DockerFilegen() {
+export default function DockerFilegen({userdata,repo,token,islogin}:any) {
     const { theme, setTheme } = useTheme()
   const [gitUrl, setGitUrl] = useState('')
   const [repos, setRepos] = useState<{ id: number; name: string; url: string; stars: number; language: string }[]>([])
@@ -65,7 +65,12 @@ export default function DockerFilegen() {
     //   setError('Failed to sign in. Please try again.')
     // }
   }
-
+useEffect(()=>{
+if(islogin){
+    setIsSignedIn(true)
+    setUser({name:userdata.name,avatar:userdata.img})
+}
+},[islogin])
   const handleGenerate = async (url: string) => {
     setIsGenerating(true)
     setError(null)
@@ -241,15 +246,12 @@ export default function DockerFilegen() {
                           <SelectValue placeholder="Select a repository" />
                         </SelectTrigger>
                         <SelectContent>
-                          {repos.map((repo) => (
-                            <SelectItem key={repo.id} value={repo.url}>
+                          {repo.map((item:any,index:number) => (
+                            // @ts-ignore
+                            <SelectItem key={index} value={item}>
                               <div className="flex items-center">
                                 <FileCode2 className="mr-2 h-4 w-4" />
-                                <span>{repo.name}</span>
-                                <Badge variant="secondary" className="ml-2">
-                                  <span className="mr-1">⭐</span>{repo.stars}
-                                </Badge>
-                                <Badge className="ml-2">{repo.language}</Badge>
+                                <span>{item.full_name}</span>
                               </div>
                             </SelectItem>
                           ))}
