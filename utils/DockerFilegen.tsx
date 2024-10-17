@@ -16,6 +16,9 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {Toaster,toast} from "sonner"
 import { useTheme } from 'next-themes'
+import CheckRepotech from '@/functions/CheckRepotech'
+import CheckRepotechurl from '@/functions/Checkrepotechurl'
+import Homepage from './Skeleton/Homepage'
 const generateDockerfile = async (repoUrl: string) => { 
   return `FROM node:14
 WORKDIR /app
@@ -34,7 +37,7 @@ const detectLanguagesAndFrameworks = async (repoUrl: string) => {
   }
 }
 
-export default function DockerFilegen({userdata,repo,token,islogin}:any) {
+export default function DockerFilegen({userdata,repo,token,islogin,loading}:any) {
     const { theme, setTheme } = useTheme()
   const [gitUrl, setGitUrl] = useState('')
   const [repos, setRepos] = useState<{ id: number; name: string; url: string; stars: number; language: string }[]>([])
@@ -71,19 +74,57 @@ if(islogin){
     setUser({name:userdata.name,avatar:userdata.img})
 }
 },[islogin])
+//github 
+  const handleGenerateGithub = async () => {
+  
+    setIsGenerating(true)
+      //@ts-ignore
+    const {framework,tech}=await CheckRepotech(selectedRepo.owner.login,selectedRepo.name,token);
+    setIsGenerating(false)
+    console.log("tech is ",tech)
+    console.log("framework is ",framework)
+    // setIsGenerating(true)
+    // setError(null)
+    // try {
+    //   const generatedDockerfile = await generateDockerfile(url)
+    //   setDockerfile(generatedDockerfile)
+    //   const detected = await detectLanguagesAndFrameworks(url)
+    //   setDetectedTech(detected)
+    // } catch (err) {
+    //   setError('Failed to generate Dockerfile. Please check the repository URL and try again.')
+    // } finally {
+    //   setIsGenerating(false)
+    // }
+  }
+  //normal
   const handleGenerate = async (url: string) => {
     setIsGenerating(true)
-    setError(null)
-    try {
-      const generatedDockerfile = await generateDockerfile(url)
-      setDockerfile(generatedDockerfile)
-      const detected = await detectLanguagesAndFrameworks(url)
-      setDetectedTech(detected)
-    } catch (err) {
-      setError('Failed to generate Dockerfile. Please check the repository URL and try again.')
-    } finally {
+    const {framework,tech,isvalid,isprivate}=await CheckRepotechurl(url);
+    if(!isvalid){
+      toast.error("Please enter a valid url")
       setIsGenerating(false)
+      return;
     }
+    if(isprivate){
+      toast.error("Access Required ! The repository is private and cannot be accessed. Please either make it public or log in via GitHub to generate the Dockerfile.")
+      setIsGenerating(false)
+      return
+    }
+    setIsGenerating(false)
+    console.log("tech is ",tech)
+    console.log("framework is ",framework)
+    
+    // setError(null)
+    // try {
+    //   const generatedDockerfile = await generateDockerfile(url)
+    //   setDockerfile(generatedDockerfile)
+    //   const detected = await detectLanguagesAndFrameworks(url)
+    //   setDetectedTech(detected)
+    // } catch (err) {
+    //   setError('Failed to generate Dockerfile. Please check the repository URL and try again.')
+    // } finally {
+    //   setIsGenerating(false)
+    // }
   }
 
   const handleCommit = async () => {
@@ -191,7 +232,7 @@ if(islogin){
         </div>
       </nav>
 
-      <div className="container mx-auto p-4 max-w-4xl relative">
+      {loading?<Homepage/>:<div className="container mx-auto p-4 max-w-4xl relative">
         <div className="absolute inset-0 -z-10 bg-[url('/placeholder.svg?height=400&width=800')] bg-center bg-no-repeat opacity-5"></div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -228,7 +269,14 @@ if(islogin){
                       onChange={(e) => setGitUrl(e.target.value)}
                       className="bg-background/50 backdrop-blur-sm"
                     />
-                    <Button onClick={() => handleGenerate(gitUrl)} disabled={isGenerating} className="w-full">
+                    <Button onClick={() => {
+                      if(gitUrl==""){
+                        toast.error("Please enter a valid url")
+                        return;
+                      }
+                      handleGenerate(gitUrl)
+                      
+                      }} disabled={isGenerating} className="w-full">
                       {isGenerating ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <FileCode2 className="mr-2 h-4 w-4" />}
                       {isGenerating ? 'Generating...' : 'Generate Dockerfile'}
                     </Button>
@@ -258,7 +306,7 @@ if(islogin){
                         </SelectContent>
                       </Select>
                       <Button
-                        onClick={() => selectedRepo && handleGenerate(selectedRepo)}
+                        onClick={() => selectedRepo && handleGenerateGithub()}
                         disabled={!selectedRepo || isGenerating}
                         className="w-full"
                       >
@@ -356,7 +404,7 @@ if(islogin){
             )}
           </Card>
         </motion.div>
-      </div>
+      </div>}
     </div>
   )
 }
