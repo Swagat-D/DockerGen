@@ -48,6 +48,13 @@ export default function DockerFilegen() {
   const [detectedTech, setDetectedTech] = useState<{ languages: string[], frameworks: string[] } | null>(null)
 
   const handleSignIn = async () => {
+                   const clientId = process.env.NEXT_PUBLIC_GIT_HUB_CLIENT_ID;
+                   const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GIT_HUB_REDIRECT_URI||"");
+                   const state = encodeURIComponent(process.env.NEXT_PUBLIC_STATE||"");
+    window.open(
+        `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo&state=${state}`,
+        "_self"
+      ); 
     // try {
     //   await signInWithGithub()
     //   setIsSignedIn(true)
