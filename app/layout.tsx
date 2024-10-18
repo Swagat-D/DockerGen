@@ -25,11 +25,11 @@ export const metadata = {
     title: "DockerGen | The Ultimate Dockerfile Generator Tool",
     description:
       "Automate Dockerfile creation effortlessly with DockerGen, the powerful Docker file generator app built with Next.js. Ideal for developers and DevOps teams.",
-    url: "https://your-docker-generator-app.com",
+    url: "https://dockergen.deploylite.tech",
     siteName: "DockerGen",
     images: [
       {
-        url: "https://your-docker-generator-app.com/og-image.png",
+        url: "https://dockergen.deploylite.tech/dockergen.png",
         width: 1200,
         height: 630,
         alt: "DockerGen - Docker File Generator",
@@ -43,8 +43,8 @@ export const metadata = {
     title: "DockerGen | Automate Dockerfile Creation Effortlessly",
     description:
       "DockerGen simplifies Dockerfile generation, improving efficiency for developers and DevOps teams. Try it now!",
-    creator: "@yourTwitterHandle",
-    images: "https://your-docker-generator-app.com/twitter-image.png",
+    creator: "@Basirkhan_786",
+    images: "https://dockergen.deploylite.tech/dockergen.png",
   },
   robots: "index, follow",
   viewport: "width=device-width, initial-scale=1.0",
