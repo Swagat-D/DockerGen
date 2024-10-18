@@ -24,12 +24,12 @@ export default function Component() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
        <header className="container mx-auto px-4 py-8 sticky top-0 z-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         <nav className="flex justify-between items-center">
-        <div className="flex items-center">
+        <Link href={"/"}> <div className="flex items-center">
               <FileCode2 className="h-8 w-8 text-primary mr-2" />
               <span className="font-bold text-xl flex flex-col">DockerGen<span className='text-xs'>
               by DeployLite
                 </span></span>
-            </div>
+            </div></Link>
             <div className="flex items-center space-x-4">
            <Link href={"/features"} ><Button variant="ghost" className="dark:text-gray-300">Features</Button></Link>
             <Link href={"/pricing"}><Button variant="ghost" className="dark:text-gray-300">Pricing</Button></Link>
@@ -43,6 +43,7 @@ export default function Component() {
       </header>
 
       <main className="container mx-auto px-4 py-16">
+        
         <section className="text-center mb-24">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500">
             Dockerize with Confidence
@@ -79,7 +80,7 @@ export default function Component() {
                     <li className="flex items-center"><Check className="mr-2 h-5 w-5 text-green-500" /> Efficient layer caching</li>
                     <li className="flex items-center"><Check className="mr-2 h-5 w-5 text-green-500" /> Best practices implementation</li>
                   </ul>
-                  <Image src="/placeholder.svg?height=200&width=300" width={300} height={200} alt="Dockerfile Generation" className="rounded-lg shadow-lg" />
+                  <Image src="/imgg.webp" width={300} height={200} alt="Dockerfile Generation" className="rounded-lg shadow-lg" />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -95,7 +96,7 @@ export default function Component() {
                     <li className="flex items-center"><Check className="mr-2 h-5 w-5 text-green-500" /> Automatic branch creation</li>
                     <li className="flex items-center"><Check className="mr-2 h-5 w-5 text-green-500" /> Pull request generation</li>
                   </ul>
-                  <Image src="/placeholder.svg?height=200&width=300" width={300} height={200} alt="GitHub Integration" className="rounded-lg shadow-lg" />
+                  <Image src="/github.webp" width={300} height={200} alt="GitHub Integration" className="rounded-lg shadow-lg" />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -111,7 +112,7 @@ export default function Component() {
                     <li className="flex items-center"><Check className="mr-2 h-5 w-5 text-green-500" /> Dependency pruning</li>
                     <li className="flex items-center"><Check className="mr-2 h-5 w-5 text-green-500" /> Compression techniques</li>
                   </ul>
-                  <Image src="/placeholder.svg?height=200&width=300" width={300} height={200} alt="Image Optimization" className="rounded-lg shadow-lg" />
+                  <Image src="/aimp.webp" width={300} height={200} alt="Image Optimization" className="rounded-lg shadow-lg" />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -152,19 +153,50 @@ export default function Component() {
         </section>
 
         <section className="mb-24">
-          <h2 className="text-3xl font-bold text-center mb-12 dark:text-gray-100">What Our Users Say</h2>
+          <h2 className="text-3xl font-bold text-center  dark:text-gray-100 mb-2">What Our Users Say</h2>
+          <div className='flex justify-center items-center'>
+           <div className='h-2 w-72 bg-indigo-600 rounded-full mb-12'></div>
+          </div>
           <div className="grid md:grid-cols-2 gap-8">
             <TestimonialCard
               quote="DockerGen has revolutionized our containerization process. It's a game-changer for our DevOps team."
-              author="Jane Doe"
-              position="CTO, Tech Innovators Inc."
+              author="Basir Khan"
+              position="Lead Developer @DeployLite."
+              image="basir.jpg"
             />
             <TestimonialCard
               quote="The time saved using DockerGen is incredible. Our deployment efficiency has improved by 300%."
-              author="John Smith"
-              position="Lead Developer, StartUp Solutions"
+              author="Nyayabrata Das"
+              position="DevRel, @DeployLite"
+              image="na.png"
             />
           </div>
+          <div className="grid md:grid-cols-2 gap-8 my-2">
+            <TestimonialCard
+              quote="DockerGen simplified our complex Docker setup. It's now faster and more reliable!"
+              author="Aniket Subudhi"
+              position="Lead Developer @FinTrack."
+              image="aniket.png"
+            />
+            <TestimonialCard
+              quote="With DockerGen, we've eliminated manual errors in our Docker files. The automation is fantastic!."
+              author="Ankit Kumar Yadav"
+              position="Lead Developer @WorkPulse @TradeSpark."
+              image="ankit.png"
+            />
+          </div>
+         
+          <div className="flex justify-center">
+  <TestimonialCard
+    quote="DockerGen has drastically reduced our build times. It’s hands down the best tool for Docker automation."
+    author="Swagat Kumar Dash"
+    position="Lead Developer @Universe"
+    image="swgat.png"
+  />
+</div>
+
+
+          
         </section>
 
         <section className="bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-800 dark:to-teal-700 rounded-lg p-12 text-center text-white">
@@ -172,9 +204,9 @@ export default function Component() {
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Join thousands of developers who are streamlining their Docker development process with DockerGen.
           </p>
-          <Button size="lg" variant="secondary" className="text-lg px-8 py-4 bg-white text-blue-600 hover:bg-gray-100">
+          <Link href={"/"}><Button size="lg" variant="secondary" className="text-lg px-8 py-4 bg-white  hover:bg-gray-100">
             Start Your Free Trial <Github className="ml-2" />
-          </Button>
+          </Button></Link>
         </section>
       </main>
 
@@ -184,8 +216,9 @@ export default function Component() {
           
         </div>
         <div className="mt-12 text-center text-gray-600 dark:text-gray-400">
-          <p>&copy; 2024 DockerGen by deploylite. All rights reserved.Made with ❤️ by Basir Khan</p>
-        </div>
+  <p>&copy; 2024 DockerGen by DeployLite. All rights reserved. Made with ❤️ by Basir Khan.</p>
+</div>
+
       </footer>
     </div>
   )
@@ -205,13 +238,13 @@ function FeatureCard({ icon, title, description }:any) {
   )
 }
 
-function TestimonialCard({ quote, author, position }:any) {
+function TestimonialCard({ quote, author, position,image }:any) {
   return (
     <Card className="dark:bg-gray-800 dark:border-gray-700">
       <CardContent className="pt-6">
         <blockquote  className="text-lg text-gray-600 dark:text-gray-300 mb-4">"{quote}"</blockquote>
         <div className="flex items-center">
-          <Image src="/placeholder.svg?height=40&width=40" width={40} height={40} alt={author} className="rounded-full mr-4" />
+          <Image src={`/${image}`} width={40} height={40} alt={author} className="rounded-full mr-4" />
           <div>
             <p className="font-semibold dark:text-gray-100">{author}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">{position}</p>

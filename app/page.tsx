@@ -27,6 +27,16 @@ fetchuserdata();
   return (
     <div>
       <DockerFilegen userdata={alluserdata} repo={repo} token={token} islogin={islogin} loading={loading}/>
+      <footer className="container mx-auto px-4 py-12 mt-24 border-t border-gray-200 dark:border-gray-700">
+        <div className="grid md:grid-cols-4 gap-8">
+         
+          
+        </div>
+        <div className="mt-12 text-center text-gray-600 dark:text-gray-400">
+  <p>&copy; 2024 DockerGen by DeployLite. All rights reserved. Made with ❤️ by Basir Khan.</p>
+</div>
+
+      </footer>
     </div>
   )
 }

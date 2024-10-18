@@ -23,12 +23,12 @@ export default function PricingPlan() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300 z-10">
       <header className="container mx-auto px-4 py-8 sticky top-0 z-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         <nav className="flex justify-between items-center ">
-        <div className="flex items-center">
+        <Link href={"/"}> <div className="flex items-center">
               <FileCode2 className="h-8 w-8 text-primary mr-2" />
               <span className="font-bold text-xl flex flex-col">DockerGen<span className='text-xs'>
               by DeployLite
                 </span></span>
-            </div>
+            </div></Link>
           <div className="flex items-center space-x-4">
            <Link href={"/features"} ><Button variant="ghost" className="dark:text-gray-300">Features</Button></Link>
             <Link href={"/pricing"}><Button variant="ghost" className="dark:text-gray-300">Pricing</Button></Link>
@@ -105,8 +105,9 @@ export default function PricingPlan() {
           
         </div>
         <div className="mt-12 text-center text-gray-600 dark:text-gray-400">
-          <p>&copy; 2024 DockerGen by deploylite. All rights reserved.Made with ❤️ by Basir Khan</p>
-        </div>
+  <p>&copy; 2024 DockerGen by DeployLite. All rights reserved. Made with ❤️ by Basir Khan.</p>
+</div>
+
       </footer>
     </div>
   )

@@ -159,17 +159,17 @@ if(data.status==201){
       <nav className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
+          <Link href={"/"}> <div className="flex items-center">
               <FileCode2 className="h-8 w-8 text-primary mr-2" />
               <span className="font-bold text-xl flex flex-col">DockerGen<span className='text-xs'>
               by DeployLite
                 </span></span>
-            </div>
+            </div></Link>
             <div className="hidden md:flex items-center space-x-4">
-              <Button variant="ghost">Home</Button>
-              <Button variant="ghost">Features</Button>
-              <Button variant="ghost">Pricing</Button>
-              <Button variant="ghost">Contact</Button>
+              <Link href={"/"}><Button variant="ghost">Home</Button></Link>
+              <Link href={"/features"}><Button variant="ghost">Features</Button></Link>
+              <Link href={"/pricing"}><Button variant="ghost">Pricing</Button></Link>
+              <Link href={""} target="_blank"><Button variant="ghost">Docs</Button></Link>
             </div>
             <div className="flex items-center">
               {isSignedIn && user ? (
