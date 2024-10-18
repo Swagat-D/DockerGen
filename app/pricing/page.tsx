@@ -32,7 +32,7 @@ export default function PricingPlan() {
           <div className="flex items-center space-x-4">
            <Link href={"/features"} ><Button variant="ghost" className="dark:text-gray-300">Features</Button></Link>
             <Link href={"/pricing"}><Button variant="ghost" className="dark:text-gray-300">Pricing</Button></Link>
-            <Link href={""} target='_blank'><Button variant="ghost" className="dark:text-gray-300">Docs</Button></Link>
+            <Link href={"https://basirblog.hashnode.dev/dockerfile-generation-made-easy-build-download-and-commit-with-dockergen"} target='_blank'><Button variant="ghost" className="dark:text-gray-300">Docs</Button></Link>
             <Link href={"/"}> <Button className="dark:bg-blue-600 dark:text-white">Get Started</Button></Link>
             <Button variant="outline" size="icon" onClick={toggleDarkMode}>
               {darkMode ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}

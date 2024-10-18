@@ -169,7 +169,7 @@ if(data.status==201){
               <Link href={"/"}><Button variant="ghost">Home</Button></Link>
               <Link href={"/features"}><Button variant="ghost">Features</Button></Link>
               <Link href={"/pricing"}><Button variant="ghost">Pricing</Button></Link>
-              <Link href={""} target="_blank"><Button variant="ghost">Docs</Button></Link>
+              <Link href={"https://basirblog.hashnode.dev/dockerfile-generation-made-easy-build-download-and-commit-with-dockergen"} target="_blank"><Button variant="ghost">Docs</Button></Link>
             </div>
             <div className="flex items-center">
               {isSignedIn && user ? (
@@ -219,18 +219,18 @@ if(data.status==201){
                     <SheetDescription>Navigate through our app</SheetDescription>
                   </SheetHeader>
                   <div className="flex flex-col space-y-4 mt-4">
-                    <Button variant="ghost" className="justify-start">
+                    <Link href={"/"}><Button variant="ghost" className="justify-start">
                       <Home className="mr-2 h-4 w-4" /> Home
-                    </Button>
-                    <Button variant="ghost" className="justify-start">
+                    </Button></Link>
+                    <Link href={"/features"}><Button variant="ghost" className="justify-start">
                       <FileCode2 className="mr-2 h-4 w-4" /> Features
-                    </Button>
-                    <Button variant="ghost" className="justify-start">
+                    </Button></Link>
+                    <Link href={"/pricing"}><Button variant="ghost" className="justify-start">
                       <Settings className="mr-2 h-4 w-4" /> Pricing
-                    </Button>
-                    <Button variant="ghost" className="justify-start">
-                      <HelpCircle className="mr-2 h-4 w-4" /> Contact
-                    </Button>
+                    </Button></Link>
+                    <Link href={"https://basirblog.hashnode.dev/dockerfile-generation-made-easy-build-download-and-commit-with-dockergen"} target='_blank'><Button variant="ghost" className="justify-start">
+                      <HelpCircle className="mr-2 h-4 w-4" /> Docs
+                    </Button></Link>
                   </div>
                 </SheetContent>
               </Sheet>
