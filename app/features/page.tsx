@@ -54,7 +54,7 @@ export default function Component() {
            <Link href={"/"} ><Button size="lg" className="text-lg px-6 py-3 dark:bg-blue-600 dark:text-white">
               Get Started <ArrowRight className="ml-2" />
             </Button></Link>
-            <Link href={"/"} target='_blanck'><Button size="lg" variant="outline" className="text-lg px-6 py-3 dark:border-gray-600 dark:text-gray-300">
+            <Link href={"/"} target='_blank'><Button size="lg" variant="outline" className="text-lg px-6 py-3 dark:border-gray-600 dark:text-gray-300">
               Learn More
             </Button></Link>
           </div>
