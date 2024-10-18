@@ -49,6 +49,19 @@ export const GET = async (req: NextRequest,res:NextResponse) => {
 //encrypting the github token for security reasons
 let token = CryptoJS.AES.encrypt(data.access_token,process.env.SECRET_KEY||"").toString();
 console.log(githubuser)
+let finduser = await User.findOne({email:githubuser.email});
+if(finduser!=null){
+    let updateuser = await User.findOneAndUpdate({email:githubuser.email},{githubtoken:token,img:githubuser.avatar_url,githubid:githubuser.login,name:githubuser.name});
+    let authtoken = jwt.sign({name:githubuser.name,email:githubuser.email,githubid:githubuser.login},process.env.SECRET_KEY||"")
+console.log(authtoken)
+setcookie.set({
+    name: 'ltoken',
+    value: authtoken,
+    httpOnly: true,
+    path: '/',
+  })
+return NextResponse.redirect(`${process.env.NEXT_URL||""}/`);
+}
 let user = new User({
     name:githubuser.name,
     email:githubuser.email,
@@ -68,6 +81,7 @@ setcookie.set({
 return NextResponse.redirect(`${process.env.NEXT_URL||""}/`);
     }
     catch(err){
+        console.log(err);
         return NextResponse.redirect(`${process.env.NEXT_URL||""}/githuberr`);
     }
 }
