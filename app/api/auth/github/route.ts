@@ -65,7 +65,7 @@ return NextResponse.redirect(`${process.env.NEXT_URL||""}/`);
 }
 let user = new User({
     name:githubuser.name,
-    email:githubuser.email,
+    email:githubuser.email||"",
     githubid:githubuser.login,
     githubtoken:token,
     img:githubuser. avatar_url,
