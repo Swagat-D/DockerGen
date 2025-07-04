@@ -42,6 +42,10 @@ export default function Navbar({ isSignedIn = false, user = null, onSignIn, onSi
     setMounted(true)
   }, [])
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
+
   const NavItems = ({ isMobile = false, onItemClick }: { isMobile?: boolean; onItemClick?: () => void }) => (
     <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'items-center space-x-6'}`}>
       <Link href="/" onClick={onItemClick}>
@@ -115,6 +119,29 @@ export default function Navbar({ isSignedIn = false, user = null, onSignIn, onSi
 
           {/* Right Section */}
           <div className="flex items-center space-x-3">
+            {/* Theme Toggle Button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleTheme}
+                    className="h-10 w-10 rounded-xl hover:bg-pink-500/10 hover:text-pink-300 transition-all duration-300"
+                  >
+                    {theme === 'dark' ? (
+                      <Sun className="h-5 w-5 text-gray-300 hover:text-pink-300 transition-colors duration-300" />
+                    ) : (
+                      <Moon className="h-5 w-5 text-gray-700 hover:text-pink-500 transition-colors duration-300" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             {/* Auth Button/Avatar */}
             {isSignedIn && user ? (
               <DropdownMenu>
@@ -187,6 +214,27 @@ export default function Navbar({ isSignedIn = false, user = null, onSignIn, onSi
                 
                 <div className="mt-8 space-y-6">
                   <NavItems isMobile={true} onItemClick={() => {}} />
+                  
+                  {/* Mobile Theme Toggle */}
+                  <div className="pt-6 border-t border-pink-500/20">
+                    <Button
+                      variant="ghost"
+                      onClick={toggleTheme}
+                      className="w-full justify-start h-12 text-gray-300 hover:text-pink-300 hover:bg-pink-500/10 transition-all duration-300 rounded-xl"
+                    >
+                      {theme === 'dark' ? (
+                        <>
+                          <Sun className="mr-2 h-4 w-4" />
+                          Switch to Light Mode
+                        </>
+                      ) : (
+                        <>
+                          <Moon className="mr-2 h-4 w-4" />
+                          Switch to Dark Mode
+                        </>
+                      )}
+                    </Button>
+                  </div>
                   
                   {/* Mobile Auth Section */}
                   {isSignedIn && user ? (
