@@ -1,63 +1,50 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { Check, X, FileCode, Github, Zap, Moon, Sun ,FileCode2} from 'lucide-react'
+import { Check, X, FileCode, Github, Zap, FileCode2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from 'next/navigation'
-export default function PricingPlan() {
-  const [darkMode, setDarkMode] = useState(false)
- const router = useRouter();
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [darkMode])
+import Navbar from '@/components/Navbar'
 
-  const toggleDarkMode = () => setDarkMode(!darkMode)
+export default function PricingPlan() {
+  const router = useRouter();
+
+  // Force dark mode on component mount
+  useEffect(() => {
+    document.documentElement.classList.add('dark')
+    document.body.style.backgroundColor = '#000000'
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300 z-10">
-      <header className="container mx-auto px-4 py-8 sticky top-0 z-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-        <nav className="flex justify-between items-center ">
-        <Link href={"/"}> <div className="flex items-center">
-              <FileCode2 className="h-8 w-8 text-primary mr-2" />
-              <span className="font-bold text-xl flex flex-col">DockerGen<span className='text-xs'>
-              by DeployLite
-                </span></span>
-            </div></Link>
-          <div className="flex items-center space-x-4">
-           <Link href={"/features"} ><Button variant="ghost" className="dark:text-gray-300">Features</Button></Link>
-            <Link href={"/pricing"}><Button variant="ghost" className="dark:text-gray-300">Pricing</Button></Link>
-            <Link href={"https://basirblog.hashnode.dev/dockerfile-generation-made-easy-build-download-and-commit-with-dockergen"} target='_blank'><Button variant="ghost" className="dark:text-gray-300">Docs</Button></Link>
-            <Link href={"/"}> <Button className="dark:bg-blue-600 dark:text-white">Get Started</Button></Link>
-            <Button variant="outline" size="icon" onClick={toggleDarkMode}>
-              {darkMode ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
-            </Button>
-          </div>
-        </nav>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900/50 to-black text-gray-100 dark">
+      {/* Import Navbar Component */}
+      <Navbar 
+        isSignedIn={false}
+        user={null}
+        onSignIn={() => {}}
+        onSignOut={() => {}}
+      />
 
       <main className="container mx-auto px-4 py-16">
         <section className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-8 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
             Simple Pricing for Everyone
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 mt-4 mb-8 max-w-2xl mx-auto">
             Optimize your Docker workflow with DockerGen - now completely free to use!
           </p>
         </section>
 
         <section className="max-w-4xl mx-auto">
-          <Card className="dark:bg-gray-800 dark:border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-center dark:text-gray-100">Free Plan</CardTitle>
-              <CardDescription className="text-center text-2xl font-semibold dark:text-gray-300">$0 / month</CardDescription>
+          <Card className="bg-black/40 backdrop-blur-xl border border-pink-500/20 shadow-2xl shadow-pink-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-purple-500/5"></div>
+            <CardHeader className="relative text-center">
+              <CardTitle className="text-3xl font-bold text-gray-100">Free Plan</CardTitle>
+              <CardDescription className="text-2xl font-semibold text-gray-300">$0 / month</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
               <ul className="space-y-4 mb-8">
                 <FeatureItem icon={<FileCode />} feature="Unlimited Dockerfile Generation" />
                 <FeatureItem icon={<Github />} feature="GitHub Integration" />
@@ -68,16 +55,23 @@ export default function PricingPlan() {
                 <FeatureItem icon={<X />} feature="Custom Integrations" available={false} />
               </ul>
             </CardContent>
-            <CardFooter>
-              <Button className="w-full text-lg py-6 dark:bg-blue-600 dark:text-white" onClick={()=>{
-               router.push("/")
-              }}>Get Started Now</Button>
+            <CardFooter className="relative">
+              <Button 
+                className="w-full text-lg py-6 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white border-0 rounded-xl font-medium shadow-lg shadow-pink-500/25 transition-all duration-300" 
+                onClick={() => {
+                  router.push("/")
+                }}
+              >
+                Get Started Now
+              </Button>
             </CardFooter>
           </Card>
         </section>
 
         <section className="mt-24 text-center">
-          <h2 className="text-3xl font-bold mb-8 dark:text-gray-100">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+            Frequently Asked Questions
+          </h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <FAQItem 
               question="Is it really free?" 
@@ -99,24 +93,19 @@ export default function PricingPlan() {
         </section>
       </main>
 
-      <footer className="container mx-auto px-4 py-12 mt-24 border-t border-gray-200 dark:border-gray-700">
-        <div className="grid md:grid-cols-4 gap-8">
-         
-          
+      <footer className="container mx-auto px-4 py-12 mt-24 border-t border-pink-500/20">
+        <div className="mt-12 text-center text-gray-400">
+          <p>&copy; 2024 DockerGen by DeployLite. All rights reserved. Made with ❤️ by Basir Khan.</p>
         </div>
-        <div className="mt-12 text-center text-gray-600 dark:text-gray-400">
-  <p>&copy; 2024 DockerGen by DeployLite. All rights reserved. Made with ❤️ by Basir Khan.</p>
-</div>
-
       </footer>
     </div>
   )
 }
 
-function FeatureItem({ icon, feature, available = true }:any) {
+function FeatureItem({ icon, feature, available = true }: any) {
   return (
-    <li className={`flex items-center space-x-3 ${available ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}`}>
-      <span className={`flex-shrink-0 w-5 h-5 ${available ? 'text-green-500' : 'text-red-500'}`}>
+    <li className={`flex items-center space-x-3 ${available ? 'text-gray-300' : 'text-gray-500'}`}>
+      <span className={`flex-shrink-0 w-5 h-5 ${available ? 'text-green-400' : 'text-red-400'}`}>
         {icon}
       </span>
       <span>{feature}</span>
@@ -124,11 +113,15 @@ function FeatureItem({ icon, feature, available = true }:any) {
   )
 }
 
-function FAQItem({ question, answer }:any) {
+function FAQItem({ question, answer }: any) {
   return (
-    <div className="text-left">
-      <h3 className="font-semibold mb-2 dark:text-gray-100">{question}</h3>
-      <p className="text-gray-600 dark:text-gray-300">{answer}</p>
-    </div>
+    <Card className="text-left bg-black/40 backdrop-blur-sm border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300">
+      <CardHeader className="pb-3">
+        <CardTitle className="font-semibold text-gray-200 text-lg">{question}</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <p className="text-gray-400">{answer}</p>
+      </CardContent>
+    </Card>
   )
 }

@@ -2,29 +2,29 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Github, Upload, FileCode2, Check, AlertCircle, Copy, RefreshCw, Trash2, Save, Download, Menu, X, Home, Settings, HelpCircle, Code2, Moon, Sun } from 'lucide-react'
+import { Github, Upload, FileCode2, Check, AlertCircle, Copy, RefreshCw, Trash2, Save, Download, Code2, Sparkles, Zap, Shield, Target, Globe } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {Toaster,toast} from "sonner"
+import { Toaster, toast } from "sonner"
 import { useTheme } from 'next-themes'
 import CheckRepotech from '@/functions/CheckRepotech'
 import CheckRepotechurl from '@/functions/Checkrepotechurl'
 import Homepage from './Skeleton/Homepage'
 import dockerFilesLatest from './dockerfiles/dockerFilesLatest'
-import { saveAs } from 'file-saver';
-import { Octokit } from "octokit";
+import { saveAs } from 'file-saver'
+import { Octokit } from "octokit"
 import Link from 'next/link'
-export default function DockerFilegen({userdata,repo,token,islogin,loading}:any) {
-    const { theme, setTheme } = useTheme()
+import Navbar from '@/components/Navbar'
+import StreamingDockerfile from '@/components/StreamingDcokerfile'
+
+export default function DockerFilegen({userdata, repo, token, islogin, loading}: any) {
   const [gitUrl, setGitUrl] = useState('')
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null)
   const [dockerfile, setDockerfile] = useState('')
@@ -36,391 +36,515 @@ export default function DockerFilegen({userdata,repo,token,islogin,loading}:any)
   const [detectedTech, setDetectedTech] = useState([])
 
   const handleSignIn = async () => {
-                   const clientId = process.env.NEXT_PUBLIC_GIT_HUB_CLIENT_ID;
-                   const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GIT_HUB_REDIRECT_URI||"");
-                   const state = encodeURIComponent(process.env.NEXT_PUBLIC_STATE||"");
+    const clientId = process.env.NEXT_PUBLIC_GIT_HUB_CLIENT_ID;
+    const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GIT_HUB_REDIRECT_URI||"");
+    const state = encodeURIComponent(process.env.NEXT_PUBLIC_STATE||"");
     window.open(
-        `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo&state=${state}`,
-        "_self"
-      ); 
-    // try {
-    //   await signInWithGithub()
-    //   setIsSignedIn(true)
-    //   const userRepos = await fetchUserRepos()
-    //   setRepos(userRepos)
-    //   setUser({ name: 'John Doe', avatar: '/placeholder.svg?height=40&width=40' })
-    // } catch (err) {
-    //   setError('Failed to sign in. Please try again.')
-    // }
+      `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo&state=${state}`,
+      "_self"
+    )
   }
-useEffect(()=>{
-if(islogin){
-    setIsSignedIn(true)
-    setUser({name:userdata.name,avatar:userdata.img})
-}
-},[islogin])
-//github 
+
+  const handleSignOut = () => {
+    setIsSignedIn(false)
+    setUser(null)
+  }
+
+  useEffect(() => {
+    if(islogin) {
+      setIsSignedIn(true)
+      setUser({name: userdata.name, avatar: userdata.img})
+    }
+  }, [islogin])
+
   const handleGenerateGithub = async () => {
-  
     setIsGenerating(true)
-      //@ts-ignore
-    const {framework,tech}=await CheckRepotech(selectedRepo.owner.login,selectedRepo.name,token);
     //@ts-ignore
-   let content = dockerFilesLatest[framework]
-   setDockerfile(content)
-   const techd = Object.keys(tech);
-   const newtechd = [...techd,framework]
-   //@ts-ignore
-   setDetectedTech(newtechd)
-   setIsGenerating(false)
+    const {framework, tech} = await CheckRepotech(selectedRepo.owner.login, selectedRepo.name, token);
+    //@ts-ignore
+    let content = dockerFilesLatest[framework]
+    setDockerfile(content)
+    const techd = Object.keys(tech);
+    const newtechd = [...techd, framework]
+    //@ts-ignore
+    setDetectedTech(newtechd)
     setIsGenerating(false)
-    console.log("tech is ",tech)
-    console.log("framework is ",framework)
   }
-  //normal
+
   const handleGenerate = async (url: string) => {
     setIsGenerating(true)
-    const {framework,tech,isvalid,isprivate}=await CheckRepotechurl(url);
-    if(!isvalid){
+    const {framework, tech, isvalid, isprivate} = await CheckRepotechurl(url);
+    if(!isvalid) {
       toast.error("Please enter a valid url")
       setIsGenerating(false)
       return;
     }
-    if(isprivate){
+    if(isprivate) {
       toast.error("Access Required ! The repository is private and cannot be accessed. Please either make it public or log in via GitHub to generate the Dockerfile.")
       setIsGenerating(false)
       return
     }
     //@ts-ignore
-   let content = dockerFilesLatest[framework]
-   setDockerfile(content)
-   const techd = Object.keys(tech);
-   const newtechd = [...techd,framework]
-   //@ts-ignore
-   setDetectedTech(newtechd)
-   setIsGenerating(false)
+    let content = dockerFilesLatest[framework]
+    setDockerfile(content)
+    const techd = Object.keys(tech);
+    const newtechd = [...techd, framework]
+    //@ts-ignore
+    setDetectedTech(newtechd)
+    setIsGenerating(false)
   }
-//commit to github.
+
   const handleCommit = async () => {
-    if(selectedRepo==null){
+    if(selectedRepo == null) {
       toast.error("Please login to commit to the GitHub")
       return;
     }
-    if(!islogin){
+    if(!islogin) {
       toast.error("Please login to commit to GitHub")
       return;
     }
-  if(dockerfile==""){
-    toast.error("Please generate a Dockerfile first before commiting your changes")
-    return;
-  }
-  setIsCommitting(true)
-    // Octokit.js
-// https://github.com/octokit/core.js#readme
-const octokit = new Octokit({
-  auth: token
-})
-try{
-const content = Buffer.from(dockerfile).toString('base64');
-let data = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-  //@ts-ignore
-  owner: selectedRepo.owner.login,
-  //@ts-ignore
-  repo: selectedRepo.name,
-  path: 'Dockerfile',
-  message: 'Docker file generated by DockerGen',
-  committer: {
-    name: userdata.name,
-    email: userdata.email
-  },
-  content: content,
-  headers: {
-    'X-GitHub-Api-Version': '2022-11-28'
-  }
-})
-setIsCommitting(false)
-if(data.status==201){
-  toast.success("Your changes have been committed successfully on your github repository.")
-}
-}catch(err){
-  toast.error("Failed to commit changes. Please try again.Make sure you have the required permissions to commit changes.")
-}
+    if(dockerfile == "") {
+      toast.error("Please generate a Dockerfile first before commiting your changes")
+      return;
+    }
+    setIsCommitting(true)
+    
+    const octokit = new Octokit({
+      auth: token
+    })
+    try {
+      const content = Buffer.from(dockerfile).toString('base64');
+      let data = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+        //@ts-ignore
+        owner: selectedRepo.owner.login,
+        //@ts-ignore
+        repo: selectedRepo.name,
+        path: 'Dockerfile',
+        message: 'Docker file generated by DockerGen',
+        committer: {
+          name: userdata.name,
+          email: userdata.email
+        },
+        content: content,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      })
+      setIsCommitting(false)
+      if(data.status == 201) {
+        toast.success("Your changes have been committed successfully on your github repository.")
+      }
+    } catch(err) {
+      toast.error("Failed to commit changes. Please try again.Make sure you have the required permissions to commit changes.")
+    }
   }
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(dockerfile)
     toast.success("Copied Successfully");
-    // You might want to show a temporary success message here
+  }
+
+  const features = [
+    {
+      icon: <Zap className="h-6 w-6" />,
+      title: "Lightning Fast",
+      description: "Generate optimized Dockerfiles in seconds"
+    },
+    {
+      icon: <Shield className="h-6 w-6" />,
+      title: "Best Practices",
+      description: "Built-in security and optimization guidelines"
+    },
+    {
+      icon: <Target className="h-6 w-6" />,
+      title: "Smart Detection",
+      description: "Automatically detects your tech stack"
+    },
+    {
+      icon: <Globe className="h-6 w-6" />,
+      title: "Multi-Platform",
+      description: "Supports all major frameworks and languages"
+    }
+  ]
+
+  // Check if URL is valid GitHub URL
+  const isValidGitUrl = (url: string) => {
+    const githubRegex = /^https:\/\/github\.com\/[\w\-\.]+\/[\w\-\.]+\/?$/
+    return githubRegex.test(url.trim())
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/5 to-background">
-        <Toaster position='top-center'/>
-      <nav className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-          <Link href={"/"}> <div className="flex items-center">
-              <FileCode2 className="h-8 w-8 text-primary mr-2" />
-              <span className="font-bold text-xl flex flex-col">DockerGen<span className='text-xs'>
-              by DeployLite
-                </span></span>
-            </div></Link>
-            <div className="hidden md:flex items-center space-x-4">
-              <Link href={"/"}><Button variant="ghost">Home</Button></Link>
-              <Link href={"/features"}><Button variant="ghost">Features</Button></Link>
-              <Link href={"/pricing"}><Button variant="ghost">Pricing</Button></Link>
-              <Link href={"https://basirblog.hashnode.dev/dockerfile-generation-made-easy-build-download-and-commit-with-dockergen"} target="_blank"><Button variant="ghost">Docs</Button></Link>
-            </div>
-            <div className="flex items-center">
-              {isSignedIn && user ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Avatar>
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Signed in as {user.name}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                <Button onClick={handleSignIn}>
-                  <Github className="mr-2 h-4 w-4" /> Sign In
-                </Button>
-              )}
-              <div className='mx-6'>
-               <TooltipProvider >
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-                      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                      <span className="sr-only">Toggle theme</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Toggle theme</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              </div>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden ml-2">
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Menu</SheetTitle>
-                    <SheetDescription>Navigate through our app</SheetDescription>
-                  </SheetHeader>
-                  <div className="flex flex-col space-y-4 mt-4">
-                    <Link href={"/"}><Button variant="ghost" className="justify-start">
-                      <Home className="mr-2 h-4 w-4" /> Home
-                    </Button></Link>
-                    <Link href={"/features"}><Button variant="ghost" className="justify-start">
-                      <FileCode2 className="mr-2 h-4 w-4" /> Features
-                    </Button></Link>
-                    <Link href={"/pricing"}><Button variant="ghost" className="justify-start">
-                      <Settings className="mr-2 h-4 w-4" /> Pricing
-                    </Button></Link>
-                    <Link href={"https://basirblog.hashnode.dev/dockerfile-generation-made-easy-build-download-and-commit-with-dockergen"} target='_blank'><Button variant="ghost" className="justify-start">
-                      <HelpCircle className="mr-2 h-4 w-4" /> Docs
-                    </Button></Link>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900/50 to-black">
+      <Toaster position='top-center'/>
+      
+      {/* Enhanced Navbar */}
+      <Navbar 
+        isSignedIn={isSignedIn}
+        user={user}
+        onSignIn={handleSignIn}
+        onSignOut={handleSignOut}
+      />
 
-      {loading?<Homepage/>:<div className="container mx-auto p-4 max-w-4xl relative">
-        <div className="absolute inset-0 -z-10 bg-[url('/placeholder.svg?height=400&width=800')] bg-center bg-no-repeat opacity-5"></div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Card className="bg-background/80 backdrop-blur-sm shadow-xl">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Docker File Generator</CardTitle>
-                  <CardDescription>Generate Dockerfiles from Git repositories with ease</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="url" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="url">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Git URL
-                  </TabsTrigger>
-                  <TabsTrigger value="github">
-                    <Github className="w-4 h-4 mr-2" />
-                    GitHub Repos
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="url">
-                  <div className="space-y-4">
-                    <Input
-                      type="text"
-                      placeholder="Enter Git repository URL"
-                      value={gitUrl}
-                      onChange={(e) => setGitUrl(e.target.value)}
-                      className="bg-background/50 backdrop-blur-sm"
-                    />
-                    <Button onClick={() => {
-                      if(gitUrl==""){
-                        toast.error("Please enter a valid url")
-                        return;
-                      }
-                      handleGenerate(gitUrl)
-                      
-                      }} disabled={isGenerating} className="w-full">
-                      {isGenerating ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <FileCode2 className="mr-2 h-4 w-4" />}
-                      {isGenerating ? 'Generating...' : 'Generate Dockerfile'}
-                    </Button>
-                  </div>
-                </TabsContent>
-                <TabsContent value="github">
-                  {!isSignedIn ? (
-                    <Button onClick={handleSignIn} className="w-full">
-                      <Github className="mr-2 h-4 w-4" /> Sign in with GitHub
-                    </Button>
-                  ) : (
-                    <div className="space-y-4">
-                      <Select onValueChange={(value) => setSelectedRepo(value)}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a repository" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {repo.map((item:any,index:number) => (
-                            // @ts-ignore
-                            <SelectItem key={index} value={item}>
-                              <div className="flex items-center">
-                                <FileCode2 className="mr-2 h-4 w-4" />
-                                <span>{item.full_name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        onClick={() => selectedRepo && handleGenerateGithub()}
-                        disabled={!selectedRepo || isGenerating}
-                        className="w-full"
-                      >
-                        {isGenerating ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <FileCode2 className="mr-2 h-4 w-4" />}
-                        {isGenerating ? 'Generating...' : 'Generate Dockerfile'}
-                      </Button>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Alert variant="destructive" className="mx-6 mb-4">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Error</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {dockerfile && (
+      {loading ? <Homepage/> : (
+        <>
+          {/* Hero Section */}
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 to-purple-500/10 blur-3xl"></div>
+            <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-20 relative">
+
+              {/* Main Generator Card */}
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="max-w-4xl mx-auto"
               >
-                <CardContent>
-                  {detectedTech && (
-                    <div className="mb-4 p-4 bg-secondary/10 rounded-md">
-                      <h3 className="text-lg font-semibold mb-2 flex items-center">
-                        <Code2 className="mr-2 h-5 w-5" />
-                        Detected Technologies
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {detectedTech.map((lang) => (
-                          <Badge key={lang} variant="secondary">{lang}</Badge>
-                        ))}
+                <Card className="bg-black/40 backdrop-blur-xl border border-pink-500/20 shadow-2xl shadow-pink-500/10 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-purple-500/5"></div>
+                  <CardHeader className="relative px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="text-center sm:text-left">
+                        <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent flex items-center justify-center sm:justify-start">
+                          <FileCode2 className="mr-3 h-6 w-6 sm:h-8 sm:w-8 text-pink-400" />
+                          Dockerfile Generator
+                        </CardTitle>
+                        <CardDescription className="text-gray-400 text-base sm:text-lg mt-2">
+                          Transform your repositories into production-ready containers
+                        </CardDescription>
                       </div>
                     </div>
+                  </CardHeader>
+                  
+                  <CardContent className="relative px-4 sm:px-6 lg:px-8">
+                    <Tabs defaultValue="url" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2 mb-6 bg-black/40 border border-pink-500/20 h-auto">
+                        <TabsTrigger 
+                          value="url"
+                          className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-pink-300 transition-all duration-300 py-3 text-sm sm:text-base"
+                        >
+                          <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
+                          <span className="hidden sm:inline">Git URL</span>
+                          <span className="sm:hidden">URL</span>
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="github"
+                          className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-pink-300 transition-all duration-300 py-3 text-sm sm:text-base"
+                        >
+                          <Github className="w-4 h-4 mr-2 flex-shrink-0" />
+                          <span className="hidden sm:inline">GitHub Repos</span>
+                          <span className="sm:hidden">GitHub</span>
+                        </TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="url" className="space-y-6">
+                        <div className="relative">
+                          <Input
+                            type="text"
+                            placeholder="https://github.com/username/repository"
+                            value={gitUrl}
+                            onChange={(e) => setGitUrl(e.target.value)}
+                            className="bg-black/40 backdrop-blur-sm border-pink-500/30 focus:border-pink-500/60 text-gray-200 placeholder:text-gray-500 h-12 text-sm sm:text-base pr-4"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-purple-500/5 rounded-md pointer-events-none"></div>
+                        </div>
+                        <Button 
+                          onClick={() => {
+                            if(gitUrl.trim() === "") {
+                              toast.error("Please enter a valid url")
+                              return;
+                            }
+                            handleGenerate(gitUrl)
+                          }} 
+                          disabled={isGenerating || gitUrl.trim() === ""} 
+                          className={`w-full transition-all duration-300 h-12 text-sm sm:text-base font-medium rounded-xl shadow-lg ${
+                            gitUrl.trim() === "" 
+                              ? "bg-gray-600/50 hover:bg-gray-600/50 text-gray-400 cursor-not-allowed shadow-none"
+                              : "bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white shadow-pink-500/25"
+                          }`}
+                        >
+                          {isGenerating ? 
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin flex-shrink-0" />
+                              <span className="hidden sm:inline">Analyzing Repository...</span>
+                              <span className="sm:hidden">Analyzing...</span>
+                            </> : 
+                            <>
+                              <FileCode2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                              <span className="hidden sm:inline">Generate Dockerfile</span>
+                              <span className="sm:hidden">Generate</span>
+                            </>
+                          }
+                        </Button>
+                      </TabsContent>
+                      
+                      <TabsContent value="github" className="space-y-6">
+                        {!isSignedIn ? (
+                          <div className="text-center p-6 sm:p-8 rounded-xl bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20">
+                            <Github className="h-10 w-10 sm:h-12 sm:w-12 text-pink-400 mx-auto mb-4" />
+                            <h3 className="text-lg sm:text-xl font-semibold text-gray-200 mb-2">Connect Your GitHub</h3>
+                            <p className="text-gray-400 mb-6 text-sm sm:text-base">Access your repositories and generate Dockerfiles instantly</p>
+                            <Button 
+                              onClick={handleSignIn} 
+                              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white border-0 rounded-xl font-medium shadow-lg shadow-pink-500/25 transition-all duration-300 h-12 px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
+                            >
+                              <Github className="mr-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                              <span className="hidden sm:inline">Connect GitHub Account</span>
+                              <span className="sm:hidden">Connect GitHub</span>
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="space-y-6">
+                            <Select onValueChange={(value) => setSelectedRepo(value)}>
+                              <SelectTrigger className="w-full bg-black/40 backdrop-blur-sm border-pink-500/30 focus:border-pink-500/60 text-gray-200 h-12 text-sm sm:text-base">
+                                <SelectValue placeholder="Select a repository from your GitHub" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-black/95 backdrop-blur-xl border-pink-500/20">
+                                {repo.map((item:any, index:number) => (
+                                  <SelectItem key={index} value={item} className="hover:bg-pink-500/10 text-gray-200">
+                                    <div className="flex items-center">
+                                      <FileCode2 className="mr-2 h-4 w-4 text-pink-400 flex-shrink-0" />
+                                      <span className="truncate">{item.full_name}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              onClick={() => selectedRepo && handleGenerateGithub()}
+                              disabled={!selectedRepo || isGenerating}
+                              className={`w-full transition-all duration-300 h-12 text-sm sm:text-base font-medium rounded-xl shadow-lg ${
+                                !selectedRepo 
+                                  ? "bg-gray-600/50 hover:bg-gray-600/50 text-gray-400 cursor-not-allowed shadow-none"
+                                  : "bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white shadow-pink-500/25"
+                              }`}
+                            >
+                              {isGenerating ? 
+                                <>
+                                  <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin flex-shrink-0" />
+                                  <span className="hidden sm:inline">Analyzing Repository...</span>
+                                  <span className="sm:hidden">Analyzing...</span>
+                                </> : 
+                                <>
+                                  <FileCode2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                                  <span className="hidden sm:inline">Generate Dockerfile</span>
+                                  <span className="sm:hidden">Generate</span>
+                                </>
+                              }
+                            </Button>
+                          </div>
+                        )}
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+
+                  {/* Error Display */}
+                  <AnimatePresence>
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className="px-4 sm:px-6 lg:px-8"
+                      >
+                        <Alert variant="destructive" className="mb-4 bg-red-500/10 border-red-500/30">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertTitle>Error</AlertTitle>
+                          <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Generated Dockerfile Display */}
+                  {dockerfile && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <CardContent className="pt-0 px-4 sm:px-6 lg:px-8">
+                        {detectedTech && detectedTech.length > 0 && (
+                          <div className="mb-6 p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50">
+                            <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center text-gray-200">
+                              <Code2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400 flex-shrink-0" />
+                              Detected Technologies
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                              {detectedTech.map((lang, index) => (
+                                <motion.div
+                                  key={lang}
+                                  initial={{ opacity: 0, scale: 0.8 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                                >
+                                  <Badge 
+                                    variant="secondary" 
+                                    className="bg-slate-800/80 text-slate-200 border-slate-600/50 hover:bg-slate-700/80 transition-colors duration-200 px-3 py-1 text-xs sm:text-sm"
+                                  >
+                                    {lang}
+                                  </Badge>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-purple-500/5 rounded-xl"></div>
+                          <div className="relative bg-black/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-pink-500/20">
+                            <div className="flex items-center justify-between mb-4">
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-200 flex items-center">
+                                <FileCode2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-pink-400 flex-shrink-0" />
+                                <span className="hidden sm:inline">Generated Dockerfile</span>
+                                <span className="sm:hidden">Dockerfile</span>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        onClick={copyToClipboard}
+                                        className="h-8 w-8 hover:bg-pink-500/10 hover:text-pink-300 transition-all duration-300"
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Copy to clipboard</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        onClick={() => setDockerfile('')}
+                                        className="h-8 w-8 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Clear Dockerfile</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                            </div>
+                            <ScrollArea className="h-64 sm:h-80">
+                              <StreamingDockerfile fullText={dockerfile} />
+                            </ScrollArea>
+                          </div>
+                        </div>
+                      </CardContent>
+                      
+                      <CardFooter className="flex flex-col gap-3 sm:gap-4 pt-6 px-4 sm:px-6 lg:px-8">
+                        <div className="w-full">
+                          <Button 
+                            onClick={handleCommit} 
+                            disabled={isCommitting} 
+                            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0 rounded-xl font-medium shadow-lg shadow-green-500/25 transition-all duration-300 h-11 text-sm sm:text-base"
+                          >
+                            {isCommitting ? 
+                              <>
+                                <RefreshCw className="mr-2 h-4 w-4 animate-spin flex-shrink-0" />
+                                <span className="hidden sm:inline">Committing...</span>
+                                <span className="sm:hidden">Committing...</span>
+                              </> : 
+                              <>
+                                <Save className="mr-2 h-4 w-4 flex-shrink-0" />
+                                <span className="hidden sm:inline">Commit to GitHub</span>
+                                <span className="sm:hidden">Commit</span>
+                              </>
+                            }
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                          <Button 
+                            variant="outline" 
+                            className="bg-black/40 border-pink-500/30 hover:bg-pink-500/10 hover:border-pink-500/50 text-gray-200 hover:text-pink-300 rounded-xl font-medium transition-all duration-300 h-11 text-sm sm:text-base" 
+                            onClick={() => {
+                              let blob = new Blob([dockerfile], { type: "application/octet-stream" });
+                              saveAs(blob, "Dockerfile");
+                              toast.success("Downloaded Successfully");
+                            }}
+                          >
+                            <Download className="mr-2 h-4 w-4 flex-shrink-0" />
+                            <span className="hidden sm:inline">Download</span>
+                            <span className="sm:hidden">Download</span>
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            className="bg-black/40 border-pink-500/30 hover:bg-pink-500/10 hover:border-pink-500/50 text-gray-200 hover:text-pink-300 rounded-xl font-medium transition-all duration-300 h-11 text-sm sm:text-base" 
+                            onClick={() => {
+                              let blob = new Blob([dockerfile], { type: "text/plain;charset=utf-8" });
+                              saveAs(blob, "Dockerfile.txt");
+                              toast.success("Downloaded Successfully");
+                            }}
+                          >
+                            <Download className="mr-2 h-4 w-4 flex-shrink-0" />
+                            <span className="hidden sm:inline">Download .txt</span>
+                            <span className="sm:hidden">Download .txt</span>
+                          </Button>
+                        </div>
+                      </CardFooter>
+                    </motion.div>
                   )}
-                  <div className="relative">
-                    <pre className="bg-secondary/10 backdrop-blur-sm p-4 rounded-md overflow-x-auto">
-                      <code className="text-sm">{dockerfile}</code>
-                    </pre>
-                    <div className="absolute top-2 right-2 space-x-2">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" onClick={copyToClipboard}>
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          
-                          <TooltipContent>
-                            <p>Copy to clipboard</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" onClick={() => setDockerfile('')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Clear Dockerfile</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col sm:flex-row gap-4">
-                  <Button onClick={handleCommit} disabled={isCommitting} className="w-full sm:w-auto">
-                    {isCommitting? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                    {isCommitting ? 'Committing...' : 'Commit to GitHub'}
-                  </Button>
-                  <Button variant="outline" className="w-full sm:w-auto" onClick={()=>{
-                    let blob = new Blob([dockerfile], { type: "application/octet-stream" });
-                    saveAs(blob, "Dockerfile");
-                    toast.success("Downloaded Successfully");
-                  }}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Dockerfile
-                  </Button>
-                  <Button variant="outline" className="w-full sm:w-auto" onClick={()=>{
-                    let blob = new Blob([dockerfile], { type: "text/plain;charset=utf-8" });
-                    saveAs(blob, "Dockerfile.txt");
-                    toast.success("Downloaded Successfully");
-                  }}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Dockerfile.txt
-                  </Button>
-                </CardFooter>
+                </Card>
               </motion.div>
-            )}
-          </Card>
-        </motion.div>
-      </div>}
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <div className="container mx-auto px-4 py-12 sm:py-16 lg:py-20">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-12 sm:mb-16"
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                Why Choose DockerGen?
+              </h2>
+              <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+                Built with modern DevOps practices in mind, DockerGen helps you create production-ready containers effortlessly.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <Card className="bg-black/40 backdrop-blur-sm border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300 h-full group">
+                    <CardHeader className="pb-4">
+                      <div className="text-pink-400 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        {feature.icon}
+                      </div>
+                      <CardTitle className="text-gray-200 group-hover:text-pink-300 transition-colors duration-300 text-lg sm:text-xl">
+                        {feature.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <CardDescription className="text-gray-400 text-sm sm:text-base">
+                        {feature.description}
+                      </CardDescription>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
